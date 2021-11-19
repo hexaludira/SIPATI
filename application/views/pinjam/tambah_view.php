@@ -78,9 +78,9 @@
 										<td>:</td>
 										<td>
 											<div class="input-group">
-												<input type="text" class="form-control" autocomplete="off" name="buku_id" id="buku-search" placeholder="Contoh ID Buku : BK001" type="text" value="">
+												<input type="hidden" class="form-control" autocomplete="off" name="buku_id" id="buku-search"  type="text" value="" readonly>
 												<span class="input-group-btn">
-													<a data-toggle="modal" data-target="#TableBuku" class="btn btn-primary"><i class="fa fa-search"></i></a>
+													<a data-toggle="modal" data-target="#TableBuku" class="btn btn-primary">Cari Buku <i class="fa fa-search"></i></a>
 												</span>
 											</div>
 										</td>
@@ -122,11 +122,14 @@
 		<thead>
 			<tr>
 				<th>No</th>
+				<th>Kode Buku</th>
 				<th>ISBN</th>
 				<th>Title</th>
 				<th>Penerbit</th>
 				<th>Tahun Buku</th>
 				<th>Stok Buku</th>
+				<th>Dipinjam</th>
+				<th>Tersedia</th>
 				<th>Tanggal Masuk</th>
 				<th>Aksi</th>
 			</tr>
@@ -135,16 +138,55 @@
 		<?php $no=1;foreach($buku->result_array() as $isi){?>
 			<tr>
 				<td><?= $no;?></td>
+				<td><?= $isi['buku_id'];?></td>
 				<td><?= $isi['isbn'];?></td>
 				<td><?= $isi['title'];?></td>
 				<td><?= $isi['penerbit'];?></td>
 				<td><?= $isi['thn_buku'];?></td>
 				<td><?= $isi['jml'];?></td>
+				<td>
+					<?php
+						$id = $isi['buku_id'];
+						$dd = $this->db->query("SELECT * FROM tbl_pinjam WHERE buku_id= '$id' AND status = 'Dipinjam'");
+						if($dd->num_rows() > 0 )
+						{
+							echo $dd->num_rows();
+						}else{
+							echo '0';
+						}
+					?>
+				</td>
+				<td>
+					<?php
+						$id = $isi['buku_id'];
+						$dd = $this->db->query("SELECT * FROM tbl_pinjam WHERE buku_id= '$id' AND status = 'Dipinjam'");
+						if($dd->num_rows() > 0 )
+						{
+							echo $sisa = $isi['jml']-$dd->num_rows();
+						}else{
+							echo $sisa = $isi['jml'];
+						}
+					?>
+				</td>
+				
 				<td><?= $isi['tgl_masuk'];?></td>
 				<td style="width:17%">
-				<button class="btn btn-primary" id="Select_File2" data_id="<?= $isi['buku_id'];?>">
-					<i class="fa fa-check"> </i> Pilih
-				</button>
+				<?php
+					if($sisa <= 0){
+						echo '
+						<button class="btn btn-primary" disabled>
+							<i class="fa fa-check"> </i> Pilih
+						</button>
+						';
+					}else{
+						echo '
+						<button class="btn btn-primary" id="Select_File2" data_id="'.$isi['buku_id'].'">
+							<i class="fa fa-check"> </i> Pilih
+						</button>
+						';
+					}
+				?>
+				
 				<a href="<?= base_url('data/bukudetail/'.$isi['id_buku']);?>" target="_blank">
 					<button class="btn btn-success"><i class="fa fa-sign-in"></i> Detail</button></a>
 				</td>
@@ -279,7 +321,7 @@
 		$("#search-box").keyup(function(){
 			$.ajax({
 				type: "POST",
-				url: "<?php echo base_url('transaksi/result');?>",
+				url: "<?php echo base_url('transaksi/result2');?>",
 				data:'kode_anggota='+$(this).val(),
 				beforeSend: function(){
 					$("#result").html("");

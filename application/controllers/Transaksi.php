@@ -170,6 +170,14 @@ class Transaksi extends CI_Controller {
 			$tgl2 = date('Y-m-d', strtotime('+'.$post['lama'].' days', strtotime($tgl)));
 
 			$hasil_cart = array_values(unserialize($this->session->userdata('cart')));
+
+			// foreach ($hasil_cart as $key => $value) {
+			// 	foreach(array_count_values($value) as $k => $v){
+			// 	  $jml[$key][$k] = $v;
+			// 	}
+			//   }
+			//   var_dump($jml);
+			
 			foreach($hasil_cart as $isi)
 			{
 				$data[] = array(
@@ -195,6 +203,10 @@ class Transaksi extends CI_Controller {
 				  // $this->session->unset_userdata('cart');
 				}
 			}
+
+			// echo $total_array;
+
+			// print_r($hasil_cart);
 
 			$this->session->set_flashdata('pesan','<div id="notifikasi"><div class="alert alert-success">
 			<p> Tambah Pinjam Buku Sukses !</p>
@@ -395,6 +407,46 @@ class Transaksi extends CI_Controller {
         
 	}
 
+	public function result2()
+    {	
+		
+		$user = $this->M_Admin->get_tableid_edit('tbl_login','anggota_id',$this->input->post('kode_anggota'));
+		error_reporting(0);
+		if($user->nama != null)
+		{
+			echo '<table class="table table-striped">
+						<tr>
+							<td>Nama Anggota</td>
+							<td>:</td>
+							<td>'.$user->nama.'</td>
+						</tr>
+						<tr>
+							<td>Telepon</td>
+							<td>:</td>
+							<td>'.$user->telepon.'</td>
+						</tr>
+						<tr>
+							<td>E-mail</td>
+							<td>:</td>
+							<td>'.$user->email.'</td>
+						</tr>
+						<tr>
+							<td>Alamat</td>
+							<td>:</td>
+							<td>'.$user->alamat.'</td>
+						</tr>
+						<tr>
+							<td>Level</td>
+							<td>:</td>
+							<td>'.$user->level.'</td>
+						</tr>
+					</table>';
+		}else{
+			echo 'Anggota Tidak Ditemukan !';
+		}
+        
+	}
+
 	public function buku()
     {	
 		$id = $this->input->post('kode_buku');
@@ -408,7 +460,7 @@ class Transaksi extends CI_Controller {
 				'qty'     => 1,
                 'price'   => '1000',
 				'name'    => $tes->title,
-				'options' => array('isbn' => $tes->isbn,'thn' => $tes->thn_buku,'penerbit' => $tes->penerbit)
+				'options' => array('isbn' => $tes->isbn,'thn' => $tes->thn_buku,'penerbit' => $tes->penerbit, 'buku_id'=>$tes->buku_id)
 			);
 			if(!$this->session->has_userdata('cart')) {
 				$cart = array($item);
@@ -437,6 +489,7 @@ class Transaksi extends CI_Controller {
 			<thead>
 				<tr>
 					<th>No</th>
+					<th>Kode Buku</th>
 					<th>Title</th>
 					<th>Penerbit</th>
 					<th>Tahun</th>
@@ -448,6 +501,7 @@ class Transaksi extends CI_Controller {
 				foreach(array_values(unserialize($this->session->userdata('cart'))) as $items){?>
 				<tr>
 					<td><?= $no;?></td>
+					<td><?= $items['options']['buku_id'];?></td>
 					<td><?= $items['name'];?></td>
 					<td><?= $items['options']['penerbit'];?></td>
 					<td><?= $items['options']['thn'];?></td>

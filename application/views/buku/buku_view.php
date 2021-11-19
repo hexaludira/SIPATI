@@ -28,6 +28,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Kode Buku</th>
                                 <th>Sampul</th>
                                 <th>ISBN</th>
                                 <th>Title</th>
@@ -35,6 +36,7 @@
                                 <th>Tahun Buku</th>
                                 <th>Stok Buku</th>
                                 <th>Dipinjam</th>
+                                <th>Tersedia</th>
                                 <th>Tanggal Masuk</th>
                                 <th>Aksi</th>
                             </tr>
@@ -43,6 +45,7 @@
                         <?php $no=1;foreach($buku->result_array() as $isi){?>
                             <tr>
                                 <td><?= $no;?></td>
+                                <td><?= $isi['buku_id'];?></td>
                                 <td>
                                     <center>
                                         <?php if(!empty($isi['sampul'] !== "0")){?>
@@ -72,8 +75,20 @@
 										}
 									?>
 								</td>
+                                <td>
+									<?php
+										$id = $isi['buku_id'];
+										$dd = $this->db->query("SELECT * FROM tbl_pinjam WHERE buku_id= '$id' AND status = 'Dipinjam'");
+										if($dd->num_rows() > 0 )
+										{
+											echo $isi['jml']-$dd->num_rows();
+										}else{
+											echo $isi['jml'];
+										}
+									?>
+								</td>
                                 <td><?= $isi['tgl_masuk'];?></td>
-									<td <?php if($this->session->userdata('level') == 'Petugas'){?>style="width:17%;"<?php }?>>
+									<td <?php if($this->session->userdata('level') == 'Petugas'){?>style="width:15%;"<?php }?>>
 								
 									<?php if($this->session->userdata('level') == 'Petugas'){?>
 									<a href="<?= base_url('data/bukuedit/'.$isi['id_buku']);?>"><button class="btn btn-success"><i class="fa fa-edit"></i></button></a>

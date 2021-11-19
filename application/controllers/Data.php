@@ -7,7 +7,8 @@ class Data extends CI_Controller {
 	 	//validasi jika user belum login
      $this->data['CI'] =& get_instance();
      $this->load->helper(array('form', 'url'));
-     $this->load->model('M_Admin');
+     $this->load->model(array('M_Admin', 'opac_model'));
+	//  $this->load->model('opac_model');
 		if($this->session->userdata('masuk_perpus') != TRUE){
 				$url=base_url('login');
 				redirect($url);
@@ -23,6 +24,34 @@ class Data extends CI_Controller {
         $this->load->view('sidebar_view',$this->data);
         $this->load->view('buku/buku_view',$this->data);
         $this->load->view('footer_view',$this->data);
+	}
+
+	public function opac(){
+		$this->data['kategori'] = $this->opac_model->get_kategori()->result();
+		$this->data['idbo'] = $this->session->userdata('ses_id');
+		$this->data['title_web'] = 'OPAC';
+        $this->load->view('header_view',$this->data);
+        $this->load->view('sidebar_view',$this->data);
+        $this->load->view('buku/opac',$this->data);
+        $this->load->view('footer_view',$this->data);
+	}
+
+	function opacProses(){
+		$judul 			= $this->input->post('judul');
+		$subyek  		= $this->input->post('subyek');
+		$pengarang 		= $this->input->post('pengarang');
+		$penerbit		= $this->input->post('penerbit');
+		$tahun_terbit 	= $this->input->post('tahun_terbit');
+
+		if($judul == '' && $subyek == '' && $pengarang == '' && $penerbit == '' && $tahun_terbit == ''){
+			$data = '';
+		}else{
+			$data = $this->opac_model->get_opac($judul, $subyek, $pengarang, $penerbit, $tahun_terbit)->result();
+		}
+		header('Content-Type: application/json');
+
+		echo json_encode($data);
+		
 	}
 
 	public function bukudetail()

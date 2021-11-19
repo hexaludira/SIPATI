@@ -23,6 +23,15 @@ class M_Admin extends CI_Model
 
    function get_tableid_edit($table_name,$where,$id)
    {
+      // $this->db->where('level','Anggota');
+     $this->db->where($where,$id);
+     $edit = $this->db->get($table_name);
+     return $edit->row();
+   }
+
+   function get_tableid_edit2($table_name,$where,$id)
+   {
+      $this->db->where('level','Anggota');
      $this->db->where($where,$id);
      $edit = $this->db->get($table_name);
      return $edit->row();

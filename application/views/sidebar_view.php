@@ -144,6 +144,11 @@
 						<i class="fa fa-print"></i> <span>Cetak kartu Anggota</span>
 					</a>
 				</li>
+                <li class="<?php if($this->uri->uri_string() == 'data/opac'){ echo 'active';}?>">
+					<a href="<?php echo base_url("data/opac");?>" class="cursor">
+						<i class="fa fa-search"></i>  <span>OPAC</span>
+					</a>
+				</li>
 			<?php }?>
         </ul>
         <div class="clearfix"></div>
